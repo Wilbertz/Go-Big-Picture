@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -9,7 +10,12 @@ import (
 )
 
 func main() {
-	f, err := os.Open("myapp.log")
+	path := flag.String("path", "myapp.log", "The path to the log.")
+	level := flag.String("level", "ERROR", "Log Level to search for.")
+
+	flag.Parse()
+
+	f, err := os.Open(*path)
 
 	if err != nil {
 		log.Fatal(err)
@@ -17,7 +23,7 @@ func main() {
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
-
+			log.Fatal(err)
 		}
 	}(f)
 
@@ -28,7 +34,7 @@ func main() {
 		if err != nil {
 			break
 		}
-		if strings.Contains(s, "ERROR") {
+		if strings.Contains(s, *level) {
 			fmt.Println(s)
 		}
 	}
